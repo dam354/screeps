@@ -10,7 +10,7 @@ module.exports.loop = function () {
     // If a creep no longer exists in the game, remove it from memory
     if (!Game.creeps[name]) {
       delete Memory.creeps[name];
-      // console.log("Clearing non-existing creep memory:", name);
+      console.log("Clearing non-existing creep memory:", name);
     }
   }
 
@@ -19,12 +19,12 @@ module.exports.loop = function () {
     Game.creeps,
     (creep) => creep.memory.role == "builder"
   );
-  // console.log("Builders: " + builders.length);
+  console.log("Builders: " + builders.length);
 
   // If there are less than 2 builders, spawn a new one
   if (builders.length < 2) {
     var newName = "Builder" + Game.time;
-    // console.log("Spawning new builder: " + newName);
+    console.log("Spawning new builder: " + newName);
     Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, {
       memory: { role: "builder" },
     });
@@ -35,12 +35,12 @@ module.exports.loop = function () {
     Game.creeps,
     (creep) => creep.memory.role == "harvester"
   );
-  // console.log("Harvesters: " + harvesters.length);
+  console.log("Harvesters: " + harvesters.length);
 
   // If there are less than 2 harvesters, spawn a new one
   if (harvesters.length < 2) {
     var newName = "Harvester" + Game.time;
-    // console.log("Spawning new harvester: " + newName);
+    console.log("Spawning new harvester: " + newName);
     Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, {
       memory: { role: "harvester" },
     });
