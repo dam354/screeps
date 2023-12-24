@@ -33,6 +33,16 @@ module.exports.loop = function () {
         console.log("Spawning new upgrader: " + newName);
         Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: "upgrader" } });
       }
+
+      let builderTarget = _.get(room.memory, ["census", "builder"], 4);
+      var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
+      console.log("builders: " + builders.length);
+
+      if (builders.length < builderTarget) {
+        var newName = "builder" + Game.time;
+        console.log("Spawning new builder: " + newName);
+        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: "builder" } });
+      }
     }
   });
 
