@@ -13,36 +13,30 @@ module.exports.loop = function () {
       console.log("Clearing non-existing creep memory:", name);
     }
   }
+  _.forEach(Game.rooms, function (room) {
+    console.log(room);
+  });
 
-  // Filter the creeps in the game to find the builders
-  var builders = _.filter(
-    Game.creeps,
-    (creep) => creep.memory.role == "builder"
-  );
-  console.log("Builders: " + builders.length);
-
-  // If there are less than 2 builders, spawn a new one
-  if (builders.length < 2) {
-    var newName = "Builder" + Game.time;
-    console.log("Spawning new builder: " + newName);
-    Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, {
-      memory: { role: "builder" },
-    });
+  if (Game.spawns["Spawn1"].spawning) {
+    var spawningCreep = Game.creeps[Game.spawns["Spawn1"].spawning.name];
+    Game.spawns["Spawn1"].room.visual.text(
+      "🛠️" + spawningCreep.memory.role,
+      Game.spawns["Spawn1"].pos.x + 1,
+      Game.spawns["Spawn1"].pos.y,
+      { align: "left", opacity: 0.8 }
+    );
   }
 
-  // Filter the creeps in the game to find the harvesters
-  var harvesters = _.filter(
-    Game.creeps,
-    (creep) => creep.memory.role == "harvester"
-  );
-  console.log("Harvesters: " + harvesters.length);
-
-  // If there are less than 2 harvesters, spawn a new one
-  if (harvesters.length < 2) {
-    var newName = "Harvester" + Game.time;
-    console.log("Spawning new harvester: " + newName);
-    Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, {
-      memory: { role: "harvester" },
-    });
+  for (var name in Game.creeps) {
+    var creep = Game.creeps[name];
+    if (creep.memory.role == "harvester") {
+      roleHarvester.run(creep);
+    }
+    if (creep.memory.role == "upgrader") {
+      roleUpgrader.run(creep);
+    }
+    if (creep.memory.role == "builder") {
+      roleUpgrader.run(creep);
+    }
   }
 };
