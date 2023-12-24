@@ -38,7 +38,9 @@ module.exports.loop = function () {
       var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
       console.log("builders: " + builders.length);
 
-      if (builders.length < builderTarget) {
+      let sites = room.find(FIND_CONSTRUCTION_SITES);
+
+      if (sites.length > 0 && builders.length < builderTarget) {
         var newName = "builder" + Game.time;
         console.log("Spawning new builder: " + newName);
         Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: "builder" } });
