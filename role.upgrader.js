@@ -25,7 +25,7 @@ var roleUpgrader = {
         });
       }
     } else {
-      let source = Game.getObjectByID(creep.memory.source) || findEnergySource(creep);
+      let source = Game.getObjectById(creep.memory.source) || findEnergySource(creep);
       if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
         creep.moveTo(source, { visualizePathStyle: { stroke: "#ffaa00" } });
       }
