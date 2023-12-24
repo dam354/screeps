@@ -14,7 +14,27 @@ module.exports.loop = function () {
     }
   }
   _.forEach(Game.rooms, function (room) {
-    console.log(room);
+    let room = Game.rooms[room];
+    if (room && room.controller && room.controller.my) {
+      let harvesterTarget = _.get(room.memory, ["census", "harvester"], 2);
+      var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == "harvester");
+      console.log("Harvesters: " + harvesters.length);
+
+      if (harvesters.length < harvesterTarget) {
+        var newName = "Harvester" + Game.time;
+        console.log("Spawning new harvester: " + newName);
+        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: "harvester" } });
+      }
+      let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 2);
+      var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == "upgrader");
+      console.log("upgraders: " + upgraders.length);
+
+      if (upgraders.length < upgraderTarget) {
+        var newName = "upgrader" + Game.time;
+        console.log("Spawning new upgrader: " + newName);
+        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: "upgrader" } });
+      }
+    }
   });
 
   if (Game.spawns["Spawn1"].spawning) {
