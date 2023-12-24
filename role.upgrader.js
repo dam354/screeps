@@ -1,3 +1,11 @@
+function findEnergySource(creep) {
+  let sources = creep.room.find(FIND_SOURCES);
+  if (sources.length) {
+    creep.memory.source = sources[0].id;
+    return sources[0];
+  }
+}
+
 var roleUpgrader = {
   /** @param {Creep} creep **/
   run: function (creep) {
@@ -17,9 +25,9 @@ var roleUpgrader = {
         });
       }
     } else {
-      var sources = creep.room.find(FIND_SOURCES);
-      if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(sources[0], { visualizePathStyle: { stroke: "#ffaa00" } });
+      let source = game.getObjectByID(creep.memory.source) || findEnergySource(creep);
+      if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(source, { visualizePathStyle: { stroke: "#ffaa00" } });
       }
     }
   },
