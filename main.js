@@ -14,7 +14,6 @@ module.exports.loop = function () {
     }
   }
   _.forEach(Game.rooms, function (room) {
-    let room = Game.rooms[room];
     if (room && room.controller && room.controller.my) {
       let harvesterTarget = _.get(room.memory, ["census", "harvester"], 2);
       var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == "harvester");
