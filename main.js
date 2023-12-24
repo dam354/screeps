@@ -15,7 +15,7 @@ module.exports.loop = function () {
   }
   _.forEach(Game.rooms, function (room) {
     if (room && room.controller && room.controller.my) {
-      let harvesterTarget = _.get(room.memory, ["census", "harvester"], 2);
+      let harvesterTarget = _.get(room.memory, ["census", "harvester"], 4);
       var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == "harvester");
       console.log("Harvesters: " + harvesters.length);
 
@@ -24,7 +24,7 @@ module.exports.loop = function () {
         console.log("Spawning new harvester: " + newName);
         Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: "harvester" } });
       }
-      let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 2);
+      let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 4);
       var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == "upgrader");
       console.log("upgraders: " + upgraders.length);
 
