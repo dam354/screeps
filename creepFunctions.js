@@ -1,7 +1,7 @@
 Creep.prototype.findEnergySource = function () {
   let sources = this.room.find(FIND_SOURCES);
   if (sources.length) {
-    let source = _.find(source, function (s) {
+    let source = _.find(sources, function (s) {
       console.log(s.pos, s.pos.getOpenPositions());
       return s.pos.getOpenPositions().length > 0;
     });
