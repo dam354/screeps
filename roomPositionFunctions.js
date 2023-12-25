@@ -21,8 +21,7 @@ RoomPosition.prototype.getOpenPositions = function getOpenPositions() {
   let walkablePositions = _.filter(nearbypositions, function (pos) {
     return terrain.get(pos.x, pos.y) !== TERRAIN_MASK_WALL;
   });
-
-  let freePositions = _.filter(walkablePositions, function () {
+  let freePositions = _.filter(walkablePositions, function (pos) {
     return !pos.lookFor(LOOK_CREEPS).length;
   });
 
