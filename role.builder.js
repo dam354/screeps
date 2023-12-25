@@ -20,10 +20,7 @@ var roleBuilder = {
         }
       }
     } else {
-      let source = Game.getObjectById(creep.memory.source) || creep.findEnergySource();
-      if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(source, { visualizePathStyle: { stroke: "#ffaa00" } });
-      }
+      creep.harvestEnergy();
     }
   },
 };
