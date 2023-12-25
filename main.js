@@ -49,7 +49,12 @@ module.exports.loop = function () {
       // If there are fewer harvesters than the target, spawn new harvesters
       if (harvesters.length < harvesterTarget) {
         var newName = "Harvester" + Game.time;
-        console.log("Spawning new harvester: " + newName);
+        console.log(
+          "Spawning new harvester: " + newName,
+          Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
+            memory: { role: "harvester" },
+          })
+        );
         Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
           memory: { role: "harvester" },
         });
