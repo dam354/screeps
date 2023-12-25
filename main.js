@@ -3,6 +3,8 @@ var roleHarvester = require("role.harvester");
 var roleBuilder = require("role.builder");
 var roleUpgrader = require("role.upgrader");
 var creepFunctions = require("creepFunctions");
+var roomPositionFunctions = require("roomPositionFunctions");
+
 // Export the main game loop
 module.exports.loop = function () {
   // Iterate over all creeps in memory
