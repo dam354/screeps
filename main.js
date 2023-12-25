@@ -5,6 +5,24 @@ var roleUpgrader = require("role.upgrader");
 var creepFunctions = require("creepFunctions");
 var roomPositionFunctions = require("roomPositionFunctions");
 
+function getBody(segment, room) {
+  let body = [];
+  // how much each sement cost
+  let segmentCost = _.sum(segment, (s) => BODYPART_COST[s]);
+
+  // how much energey we can use total
+  let energyAvailable = room.energyCapacityAvailable;
+
+  // how many times we can include the segment with room energy
+  let maxSegments = Math.floor(energyAvailable / segmentCost);
+
+  _.times(maxSegments, function () {
+    _.forEach(segment, (s) => body.push(s));
+  });
+
+  return body;
+}
+
 // Export the main game loop
 module.exports.loop = function () {
   // Iterate over all creeps in memory
@@ -24,7 +42,9 @@ module.exports.loop = function () {
       if (harvesters.length < harvesterTarget) {
         var newName = "Harvester" + Game.time;
         console.log("Spawning new harvester: " + newName);
-        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE, MOVE], newName, { memory: { role: "harvester" } });
+        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
+          memory: { role: "harvester" },
+        });
       }
       let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 4);
       var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == "upgrader");
@@ -33,7 +53,7 @@ module.exports.loop = function () {
       if (upgraders.length < upgraderTarget) {
         var newName = "upgrader" + Game.time;
         console.log("Spawning new upgrader: " + newName);
-        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE, MOVE], newName, { memory: { role: "upgrader" } });
+        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, { memory: { role: "upgrader" } });
       }
 
       let builderTarget = _.get(room.memory, ["census", "builder"], 4);
@@ -45,7 +65,7 @@ module.exports.loop = function () {
       if (sites.length > 0 && builders.length < builderTarget) {
         var newName = "builder" + Game.time;
         console.log("Spawning new builder: " + newName);
-        Game.spawns["Spawn1"].spawnCreep([WORK, CARRY, MOVE, MOVE], newName, { memory: { role: "builder" } });
+        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, { memory: { role: "builder" } });
       }
     }
   });
