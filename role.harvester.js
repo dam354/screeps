@@ -14,8 +14,9 @@ var roleHarvester = {
       var targets = creep.room.find(FIND_MY_STRUCTURES);
       targets = _.filter(targets, function (struct) {
         return (
-          (struct.structureType == STRUCTURE_TOWER ||
+          (struct.structureType == STRUCTURE_CONTAINER ||
             struct.structureType == STRUCTURE_EXTENSION ||
+            struct.structureType == STRUCTURE_TOWER ||
             struct.structureType == STRUCTURE_SPAWN) &&
           struct.store.getFreeCapacity(RESOURCE_ENERGY) > 0
         );

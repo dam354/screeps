@@ -7,32 +7,37 @@ var roomPositionFunctions = require("roomPositionFunctions");
 
 // Function to calculate the body parts of a creep based on available energy in the room
 function getBody(segment, room) {
-  let body = [];
   // Calculate the cost of a single segment of body parts
-  let segmentCost = _.sum(segment, (s) => BODYPART_COST[s]);
+  const segmentCost = _.sum(segment, (s) => BODYPART_COST[s]);
 
-  // Retrieve the total energy capacity available in the room
-  let energyAvailable = room.energyCapacityAvailable;
+  let energyAvailable = room.energyAvailable;
 
-  // Determine the maximum number of segments that can be created with the available energy
+  // If the available energy is less than the cost of one segment, return an empty array or minimal viable body
+  if (energyAvailable < segmentCost) {
+    return []; // Or return a minimal viable body, e.g., [MOVE]
+  }
+
+  // Calculate the maximum number of segments
   let maxSegments = Math.floor(energyAvailable / segmentCost);
+  let body = [];
 
-  // Construct the body parts array based on the maximum segments possible
-  _.times(maxSegments, function () {
-    _.forEach(segment, (s) => body.push(s));
-  });
+  // Efficiently build the body array
+  for (let i = 0; i < maxSegments; i++) {
+    body.push(...segment);
+  }
 
   return body;
 }
 
 // Main game loop
 module.exports.loop = function () {
-  // Iterate over all creeps stored in memory
-  for (var name in Memory.creeps) {
-    // Remove creeps from memory that no longer exist in the game
-    if (!Game.creeps[name]) {
-      delete Memory.creeps[name];
-      console.log("Clearing non-existing creep memory:", name);
+  // Only run memory cleanup if the number of creeps in memory doesn't match the number of creeps in the game
+  if (Object.keys(Memory.creeps).length !== Object.keys(Game.creeps).length) {
+    for (var name in Memory.creeps) {
+      if (!Game.creeps[name]) {
+        delete Memory.creeps[name];
+        console.log("Clearing non-existing creep memory:", name);
+      }
     }
   }
 
@@ -40,8 +45,14 @@ module.exports.loop = function () {
   _.forEach(Game.rooms, function (room) {
     // Check if the room has a controller and it belongs to the player
     if (room && room.controller && room.controller.my) {
+      if (room.memory.sources) {
+        room.memory.sources = room.memory.sources.filter((id) => Game.getObjectById(id));
+        if (!room.memory.sources.length) {
+          delete room.memory.sources;
+        }
+      }
       // Determine the target number of harvesters for this room
-      let harvesterTarget = _.get(room.memory, ["census", "harvester"], 4);
+      let harvesterTarget = _.get(room.memory, ["census", "harvester"], 6);
       // Get the current number of harvester creeps
       var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == "harvester");
       console.log("Harvesters: " + harvesters.length);
@@ -55,7 +66,7 @@ module.exports.loop = function () {
             memory: { role: "harvester" },
           })
         );
-        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
+        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE, MOVE], room), newName, {
           memory: { role: "harvester" },
         });
       }
@@ -68,10 +79,12 @@ module.exports.loop = function () {
       if (upgraders.length < upgraderTarget) {
         var newName = "upgrader" + Game.time;
         console.log("Spawning new upgrader: " + newName);
-        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, { memory: { role: "upgrader" } });
+        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE, MOVE], room), newName, {
+          memory: { role: "upgrader" },
+        });
       }
 
-      let builderTarget = _.get(room.memory, ["census", "builder"], 4);
+      let builderTarget = _.get(room.memory, ["census", "builder"], 2);
       var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
       console.log("builders: " + builders.length);
 
@@ -82,7 +95,9 @@ module.exports.loop = function () {
       if (sites.length > 0 && builders.length < builderTarget) {
         var newName = "builder" + Game.time;
         console.log("Spawning new builder: " + newName);
-        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, { memory: { role: "builder" } });
+        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE, MOVE], room), newName, {
+          memory: { role: "builder" },
+        });
       }
     }
   });
