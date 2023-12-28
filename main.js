@@ -11,6 +11,7 @@ var roomPositionFunctions = require("roomPositionFunctions");
 // Function to calculate the body parts of a creep based on available energy in the room
 
 function getBody(segment, room) {
+  8;
   // Calculate the cost of a single segment of body parts
   const segmentCost = _.sum(segment, (s) => BODYPART_COST[s]);
 
@@ -104,7 +105,7 @@ module.exports.loop = function () {
       //   );
       // }
 
-      let builderTarget = _.get(room.memory, ["census", "builder"], 2);
+      let builderTarget = _.get(room.memory, ["census", "builder"], 4);
       var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
       console.log("builders: " + builders.length);
 
