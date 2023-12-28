@@ -132,7 +132,7 @@ module.exports.loop = function () {
         });
       }
 
-      let carrierTarget = _.get(room.memory, ["census", "carrier"], 2);
+      let carrierTarget = _.get(room.memory, ["census", "carrier"], 4);
       var carriers = _.filter(Game.creeps, (creep) => creep.memory.role == "carrier");
       console.log("Carriers: " + carriers.length);
 
