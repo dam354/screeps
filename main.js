@@ -9,6 +9,7 @@ var creepFunctions = require("creepFunctions");
 var roomPositionFunctions = require("roomPositionFunctions");
 
 // Function to calculate the body parts of a creep based on available energy in the room
+const PROGRESS_CHECK_INTERVAL = 100; // Check every 100 ticks
 
 function getBody(segment, room) {
   8;
@@ -177,7 +178,36 @@ module.exports.loop = function () {
       { align: "left", opacity: 0.8 }
     );
   }
+  // Track controller progress
+  if (Game.time % PROGRESS_CHECK_INTERVAL === 0) {
+    Memory.progressTracking = Memory.progressTracking || {};
+    const roomNames = Object.keys(Game.rooms);
 
+    roomNames.forEach((roomName) => {
+      const room = Game.rooms[roomName];
+      if (room.controller && room.controller.my) {
+        const currentProgress = room.controller.progress;
+        const lastCheck = Memory.progressTracking[roomName];
+
+        if (lastCheck) {
+          const progressDelta = currentProgress - lastCheck.progress;
+          const ticksDelta = Game.time - lastCheck.time;
+          const ratePerTick = progressDelta / ticksDelta;
+
+          const remainingProgress = room.controller.progressTotal - currentProgress;
+          const estimatedTicksToNextLevel = Math.ceil(remainingProgress / ratePerTick);
+
+          console.log(`Room ${roomName}: Estimated ${estimatedTicksToNextLevel} ticks to next level.`);
+        }
+
+        // Update the tracking information
+        Memory.progressTracking[roomName] = {
+          progress: currentProgress,
+          time: Game.time,
+        };
+      }
+    });
+  }
   // Iterate over all creeps and execute their role-specific logic
   for (var name in Game.creeps) {
     var creep = Game.creeps[name];
