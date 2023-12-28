@@ -5,7 +5,7 @@ const roleCarrier = {
     // Creep renewal logic
     if (creep.ticksToLive < 50) {
       creep.say("Renewing");
-      creep.moveTo(Game.spawns["Spawn1"]);
+      creep.moveTo(Game.spawns["Spawn1"], { visualizePathStyle: { stroke: "#00ff00" }, reusePath: 50 });
       Game.spawns["Spawn1"].renewCreep(creep);
       return; // Exit early to avoid further action this tick
     }
@@ -15,6 +15,7 @@ const roleCarrier = {
     } else if (creep.store[RESOURCE_ENERGY] === 0) {
       creep.memory.delivering = false;
     }
+
     // Determine whether the creep should be collecting or delivering energy
     if (creep.memory.delivering) {
       // Delivering energy to a structure
@@ -31,7 +32,7 @@ const roleCarrier = {
 
       if (target) {
         if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { visualizePathStyle: { stroke: "#ffffff" } });
+          creep.moveTo(target, { visualizePathStyle: { stroke: "#ff0000" }, reusePath: 50 });
         }
       } else {
         // Switch to collecting mode if no delivery targets
@@ -50,7 +51,7 @@ const roleCarrier = {
       if (target) {
         let actionResult = target instanceof Resource ? creep.pickup(target) : creep.withdraw(target, RESOURCE_ENERGY);
         if (actionResult == ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { visualizePathStyle: { stroke: "#ffaa00" } });
+          creep.moveTo(target, { visualizePathStyle: { stroke: "#ffaa00" }, reusePath: 50 });
         }
       } else {
         // If no targets are found, move to a standby position
