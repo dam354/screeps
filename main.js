@@ -84,17 +84,54 @@ module.exports.loop = function () {
       //   });
       // }
 
-      // let staticHarvesterTarget = _.get(room.memory, ["census", "staticHarvester"], 2);
-      // var staticHarvesters = _.filter(Game.creeps, (creep) => creep.memory.role == "staticHarvester");
-      // console.log("staticHarvesters: " + miners.length);
+      // let repairerTarget = _.get(room.memory, ["census", "repairer"], 3); // Adjust the target as needed
+      // var repairers = _.filter(
+      //   Game.creeps,
+      //   (creep) => creep.memory.role == "repairer"
+      // );
+      // console.log("Repairers: " + repairers.length);
 
-      // if (staticHarvesters.length < staticHarvesterTarget) {
-      //   var newName = "Miner" + Game.time;
-      //   console.log("Spawning new miner: " + newName);
-      //   Game.spawns["Spawn1"].spawnCreep(getBody([WORK, WORK, MOVE], room), newName, {
-      //     memory: { role: "staticHarvester", sourceId: /* your source ID here */ },
-      //   });
+      // // If there are fewer repairers than the target, spawn new repairers
+      // if (repairers.length < repairerTarget) {
+      //   var newName = "Repairer" + Game.time;
+      //   console.log("Spawning new repairer: " + newName);
+      //   Game.spawns["Spawn1"].spawnCreep(
+      //     getBody([WORK, CARRY, MOVE], room),
+      //     newName,
+      //     {
+      //       memory: { role: "repairer" },
+      //     }
+      //   );
       // }
+
+      let builderTarget = _.get(room.memory, ["census", "builder"], 2);
+      var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
+      console.log("builders: " + builders.length);
+
+      // Check for construction sites in the room
+      let sites = room.find(FIND_CONSTRUCTION_SITES);
+
+      // Spawn new builders if there are construction sites and fewer builders than the target
+      if (sites.length > 0 && builders.length < builderTarget) {
+        var newName = "builder" + Game.time;
+        console.log("Spawning new builder: " + newName);
+        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
+          memory: { role: "builder" },
+        });
+      }
+      // Similar logic for upgraders and builders
+      let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 3);
+      var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == "upgrader");
+      console.log("upgraders: " + upgraders.length);
+
+      if (upgraders.length < upgraderTarget) {
+        var newName = "upgrader" + Game.time;
+        console.log("Spawning new upgrader: " + newName);
+        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
+          memory: { role: "upgrader" },
+        });
+      }
+
       let carrierTarget = _.get(room.memory, ["census", "carrier"], 2);
       var carriers = _.filter(Game.creeps, (creep) => creep.memory.role == "carrier");
       console.log("Carriers: " + carriers.length);
@@ -122,55 +159,6 @@ module.exports.loop = function () {
           });
         }
       });
-
-      // // Similar logic for upgraders and builders
-      // let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 2);
-      // var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == "upgrader");
-      // console.log("upgraders: " + upgraders.length);
-
-      // if (upgraders.length < upgraderTarget) {
-      //   var newName = "upgrader" + Game.time;
-      //   console.log("Spawning new upgrader: " + newName);
-      //   Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
-      //     memory: { role: "upgrader" },
-      //   });
-      // }
-
-      // let builderTarget = _.get(room.memory, ["census", "builder"], 2);
-      // var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
-      // console.log("builders: " + builders.length);
-
-      // // Check for construction sites in the room
-      // let sites = room.find(FIND_CONSTRUCTION_SITES);
-
-      // // Spawn new builders if there are construction sites and fewer builders than the target
-      // if (sites.length > 0 && builders.length < builderTarget) {
-      //   var newName = "builder" + Game.time;
-      //   console.log("Spawning new builder: " + newName);
-      //   Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
-      //     memory: { role: "builder" },
-      //   });
-      // }
-
-      // let repairerTarget = _.get(room.memory, ["census", "repairer"], 3); // Adjust the target as needed
-      // var repairers = _.filter(
-      //   Game.creeps,
-      //   (creep) => creep.memory.role == "repairer"
-      // );
-      // console.log("Repairers: " + repairers.length);
-
-      // // If there are fewer repairers than the target, spawn new repairers
-      // if (repairers.length < repairerTarget) {
-      //   var newName = "Repairer" + Game.time;
-      //   console.log("Spawning new repairer: " + newName);
-      //   Game.spawns["Spawn1"].spawnCreep(
-      //     getBody([WORK, CARRY, MOVE], room),
-      //     newName,
-      //     {
-      //       memory: { role: "repairer" },
-      //     }
-      //   );
-      // }
     }
   });
 
