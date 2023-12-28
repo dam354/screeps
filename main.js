@@ -123,18 +123,18 @@ module.exports.loop = function () {
         });
       }
 
-      // Similar logic for upgraders and builders
-      let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 2);
-      var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == "upgrader");
-      console.log("upgraders: " + upgraders.length);
+      // // Similar logic for upgraders and builders
+      // let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 2);
+      // var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == "upgrader");
+      // console.log("upgraders: " + upgraders.length);
 
-      if (upgraders.length < upgraderTarget) {
-        var newName = "upgrader" + Game.time;
-        console.log("Spawning new upgrader: " + newName);
-        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
-          memory: { role: "upgrader" },
-        });
-      }
+      // if (upgraders.length < upgraderTarget) {
+      //   var newName = "upgrader" + Game.time;
+      //   console.log("Spawning new upgrader: " + newName);
+      //   Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
+      //     memory: { role: "upgrader" },
+      //   });
+      // }
 
       // let builderTarget = _.get(room.memory, ["census", "builder"], 2);
       // var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
