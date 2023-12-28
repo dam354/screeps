@@ -153,10 +153,14 @@ module.exports.loop = function () {
 
         if (staticHarvesters.length < sourceData.openSpots) {
           var newName = "StaticHarvester" + Game.time;
-          console.log("Spawning new static harvester: " + newName + " for source: " + sourceId);
-          Game.spawns["Spawn1"].spawnCreep(getBody([WORK, WORK, MOVE], room), newName, {
-            memory: { role: "staticHarvester", sourceId: sourceId },
-          });
+
+          // Check if the spawn is already in the process of spawning a creep
+          if (!Game.spawns["Spawn1"].spawning) {
+            console.log("Spawning new static harvester: " + newName + " for source: " + sourceId);
+            Game.spawns["Spawn1"].spawnCreep(getBody([WORK, WORK, MOVE], room), newName, {
+              memory: { role: "staticHarvester", sourceId: sourceId },
+            });
+          }
         }
       });
     }
