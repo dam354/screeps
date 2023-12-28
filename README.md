@@ -37,3 +37,16 @@ Contributions to the project are welcome. Please ensure that any pull requests m
 ### License
 
 This project is open-source and available under the [MIT license](LICENSE).
+
+## TODO List for Creep Upgrades/Improvements
+
+1. **Optimize Energy Harvesting** - Improve the efficiency of energy harvesting by creeps, possibly by implementing a queue system for sources to minimize wait times.
+2. **Dynamic Body Parts** - Develop a system to dynamically adjust the body parts of creeps based on available resources and current needs of the colony.
+3. **Role Specialization** - Refine the roles and behaviors of creeps to ensure that each role is as effective as possible, including specialized roles for defense, offense, and resource management.
+4. **Automated Spawning Logic** - Create a more sophisticated logic for the automatic spawning of creeps based on the current and projected needs of the colony.
+5. **Memory Management** - Implement a cleanup routine for memory objects associated with dead creeps to prevent memory leaks.
+6. **Pathfinding Optimization** - Enhance the pathfinding algorithms to reduce CPU usage and improve the movement efficiency of creeps.
+7. **Creep Renewal and Recycling** - Set up a system for the automatic renewal of creeps nearing the end of their lifespan and the recycling of creeps when they are no longer needed.
+8. **Remote Operations** - Develop strategies for creeps to operate in remote rooms, including remote harvesting, claiming, and room defense.
+9. **Market Integration** - Integrate market trading into the creep's behavior to sell excess resources and buy needed resources at favorable prices.
+10. **Inter-Room Resource Balancing** - Create a system to balance resources across multiple rooms, ensuring that all rooms have the resources they need for growth and defense.
