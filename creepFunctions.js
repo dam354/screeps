@@ -1,20 +1,20 @@
 Creep.prototype.findEnergySource = function () {
-  // Check if the creep has a valid stored source with open positions
-  const storedSource = Game.getObjectById(this.memory.source);
-  if (storedSource && storedSource.pos.getOpenPositions().length > 0) {
-    return storedSource;
+  if (!this.room.memory.sources) {
+    // Initialize sources if it's not already defined
+    this.room.memory.sources = this.room.find(FIND_SOURCES).map((source) => source.id);
   }
 
-  // Find a new source, considering distance and load balancing
-  const sources = this.room.memory.sources
-    .map((id) => Game.getObjectById(id))
-    .filter((source) => source && source.pos.getOpenPositions().length > 0);
-
-  const closestSource = this.pos.findClosestByPath(sources);
-  if (closestSource) {
-    this.memory.source = closestSource.id;
-    return closestSource;
+  let source = this.memory.source ? Game.getObjectById(this.memory.source) : null;
+  if (source && source.pos.getOpenPositions().length > 0) {
+    return source;
   }
+
+  let sources = this.room.memory.sources.map((id) => Game.getObjectById(id));
+  source = _.find(sources, (s) => s && s.pos.getOpenPositions().length > 0);
+  if (source) {
+    this.memory.source = source.id;
+  }
+  return source;
 };
 
 Creep.prototype.harvestEnergy = function harvestEnergy() {
