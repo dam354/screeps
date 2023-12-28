@@ -111,7 +111,7 @@ module.exports.loop = function () {
           });
         }
       });
-      let carrierTarget = _.get(room.memory, ["census", "carrier"], 3);
+      let carrierTarget = _.get(room.memory, ["census", "carrier"], 2);
       var carriers = _.filter(Game.creeps, (creep) => creep.memory.role == "carrier");
       console.log("Carriers: " + carriers.length);
 
@@ -124,7 +124,7 @@ module.exports.loop = function () {
       }
 
       // Similar logic for upgraders and builders
-      let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 4);
+      let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 2);
       var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == "upgrader");
       console.log("upgraders: " + upgraders.length);
 
