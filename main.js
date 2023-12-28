@@ -49,6 +49,15 @@ module.exports.loop = function () {
   _.forEach(Game.rooms, function (room) {
     // Check if the room has a controller and it belongs to the player
     if (room && room.controller && room.controller.my) {
+      if (!room.memory.sourcesData) {
+        room.memory.sourcesData = {};
+        const sources = room.find(FIND_SOURCES);
+        for (const source of sources) {
+          const openPositions = source.pos.getOpenPositions().length;
+          room.memory.sourcesData[source.id] = { openSpots: openPositions };
+        }
+      }
+
       if (room.memory.sources) {
         room.memory.sources = room.memory.sources.filter((id) => Game.getObjectById(id));
         if (!room.memory.sources.length) {
@@ -75,29 +84,44 @@ module.exports.loop = function () {
       //   });
       // }
 
-      let staticHarvesterTarget = _.get(room.memory, ["census", "staticHarvester"], 2);
-var staticHarvesters = _.filter(Game.creeps, (creep) => creep.memory.role == "staticHarvester");
-console.log("staticHarvesters: " + miners.length);
+      // let staticHarvesterTarget = _.get(room.memory, ["census", "staticHarvester"], 2);
+      // var staticHarvesters = _.filter(Game.creeps, (creep) => creep.memory.role == "staticHarvester");
+      // console.log("staticHarvesters: " + miners.length);
 
-if (staticHarvesters.length < staticHarvesterTarget) {
-  var newName = "Miner" + Game.time;
-  console.log("Spawning new miner: " + newName);
-  Game.spawns["Spawn1"].spawnCreep(getBody([WORK, WORK, MOVE], room), newName, {
-    memory: { role: "staticHarvester", sourceId: /* your source ID here */ },
-  });
-}
+      // if (staticHarvesters.length < staticHarvesterTarget) {
+      //   var newName = "Miner" + Game.time;
+      //   console.log("Spawning new miner: " + newName);
+      //   Game.spawns["Spawn1"].spawnCreep(getBody([WORK, WORK, MOVE], room), newName, {
+      //     memory: { role: "staticHarvester", sourceId: /* your source ID here */ },
+      //   });
+      // }
+      _.forEach(room.memory.sourcesData, (sourceData, sourceId) => {
+        let staticHarvesters = _.filter(
+          Game.creeps,
+          (creep) => creep.memory.role == "staticHarvester" && creep.memory.sourceId == sourceId
+        );
 
-let carrierTarget = _.get(room.memory, ["census", "carrier"], 3);
-var carriers = _.filter(Game.creeps, (creep) => creep.memory.role == "carrier");
-console.log("Carriers: " + carriers.length);
+        console.log("Static Harvesters for source " + sourceId + ": " + staticHarvesters.length);
 
-if (carriers.length < carrierTarget) {
-  var newName = "Carrier" + Game.time;
-  console.log("Spawning new carrier: " + newName);
-  Game.spawns["Spawn1"].spawnCreep(getBody([CARRY, MOVE, MOVE], room), newName, {
-    memory: { role: "carrier" },
-  });
-}
+        if (staticHarvesters.length < sourceData.openSpots) {
+          var newName = "StaticHarvester" + Game.time;
+          console.log("Spawning new static harvester: " + newName + " for source: " + sourceId);
+          Game.spawns["Spawn1"].spawnCreep(getBody([WORK, WORK, MOVE], room), newName, {
+            memory: { role: "staticHarvester", sourceId: sourceId },
+          });
+        }
+      });
+      let carrierTarget = _.get(room.memory, ["census", "carrier"], 3);
+      var carriers = _.filter(Game.creeps, (creep) => creep.memory.role == "carrier");
+      console.log("Carriers: " + carriers.length);
+
+      if (carriers.length < carrierTarget) {
+        var newName = "Carrier" + Game.time;
+        console.log("Spawning new carrier: " + newName);
+        Game.spawns["Spawn1"].spawnCreep(getBody([CARRY, MOVE, MOVE], room), newName, {
+          memory: { role: "carrier" },
+        });
+      }
 
       // Similar logic for upgraders and builders
       let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 4);
@@ -175,6 +199,12 @@ if (carriers.length < carrierTarget) {
     }
     if (creep.memory.role == "repairer") {
       roleRepairer.run(creep);
+    }
+    if (creep.memory.role == "staticHarvester") {
+      roleStaticHarvester.run(creep);
+    }
+    if (creep.memory.role == "carrier") {
+      roleCarrier.run(creep);
     }
   }
 };
