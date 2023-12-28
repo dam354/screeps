@@ -62,35 +62,33 @@ const roleCarrier = {
 
   // Function to find targets, prioritizing distant ones if no nearby targets are found
   findEnergyTarget: function (creep) {
-    let target = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
+    // Find all dropped resources in the room
+    const droppedResources = creep.room.find(FIND_DROPPED_RESOURCES, {
       filter: (resource) => resource.resourceType == RESOURCE_ENERGY,
     });
 
-    if (!target) {
-      target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-        filter: (s) => s.structureType == STRUCTURE_CONTAINER && s.store.getUsedCapacity(RESOURCE_ENERGY) > 0,
-      });
+    // Sort the dropped resources by amount, descending
+    droppedResources.sort((a, b) => b.amount - a.amount);
+
+    // Select the dropped resource with the most energy, if available
+    if (droppedResources.length > 0) {
+      return droppedResources[0];
     }
 
-    // If no close target is found, look for the farthest one
-    if (!target) {
-      let allTargets = creep.room
-        .find(FIND_DROPPED_RESOURCES, {
-          filter: (resource) => resource.resourceType == RESOURCE_ENERGY,
-        })
-        .concat(
-          creep.room.find(FIND_STRUCTURES, {
-            filter: (s) => s.structureType == STRUCTURE_CONTAINER && s.store.getUsedCapacity(RESOURCE_ENERGY) > 0,
-          })
-        );
+    // If no dropped resources, then look for containers with energy
+    let containersWithEnergy = creep.room.find(FIND_STRUCTURES, {
+      filter: (s) => s.structureType == STRUCTURE_CONTAINER && s.store.getUsedCapacity(RESOURCE_ENERGY) > 0,
+    });
 
-      if (allTargets.length > 0) {
-        allTargets.sort((a, b) => creep.pos.getRangeTo(a) - creep.pos.getRangeTo(b));
-        target = allTargets[allTargets.length - 1]; // Select the farthest target
-      }
+    // Sort containers by energy amount, descending
+    if (containersWithEnergy.length > 0) {
+      containersWithEnergy.sort(
+        (a, b) => b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY)
+      );
+      return containersWithEnergy[0]; // Select the container with the most energy
     }
 
-    return target;
+    return null; // Return null if no targets are found
   },
 
   // Logic for handling full spots near static harvesters
