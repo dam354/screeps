@@ -95,6 +95,17 @@ module.exports.loop = function () {
       //     memory: { role: "staticHarvester", sourceId: /* your source ID here */ },
       //   });
       // }
+      let carrierTarget = _.get(room.memory, ["census", "carrier"], 2);
+      var carriers = _.filter(Game.creeps, (creep) => creep.memory.role == "carrier");
+      console.log("Carriers: " + carriers.length);
+
+      if (carriers.length < carrierTarget) {
+        var newName = "Carrier" + Game.time;
+        console.log("Spawning new carrier: " + newName);
+        Game.spawns["Spawn1"].spawnCreep(getBody([CARRY, MOVE, MOVE], room), newName, {
+          memory: { role: "carrier" },
+        });
+      }
       _.forEach(room.memory.sourcesData, (sourceData, sourceId) => {
         let staticHarvesters = _.filter(
           Game.creeps,
@@ -111,17 +122,6 @@ module.exports.loop = function () {
           });
         }
       });
-      let carrierTarget = _.get(room.memory, ["census", "carrier"], 2);
-      var carriers = _.filter(Game.creeps, (creep) => creep.memory.role == "carrier");
-      console.log("Carriers: " + carriers.length);
-
-      if (carriers.length < carrierTarget) {
-        var newName = "Carrier" + Game.time;
-        console.log("Spawning new carrier: " + newName);
-        Game.spawns["Spawn1"].spawnCreep(getBody([CARRY, MOVE, MOVE], room), newName, {
-          memory: { role: "carrier" },
-        });
-      }
 
       // // Similar logic for upgraders and builders
       // let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 2);
