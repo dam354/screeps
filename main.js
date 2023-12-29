@@ -1,12 +1,17 @@
-// Import the roles for different types of creeps
-var roleHarvester = require("role.harvester");
-var roleBuilder = require("role.builder");
-var roleUpgrader = require("role.upgrader");
-var roleRepairer = require("role.repairer");
-var roleStaticHarvester = require("role.staticHarvester");
-var roleCarrier = require("role.carrier");
 var creepFunctions = require("creepFunctions");
 var roomPositionFunctions = require("roomPositionFunctions");
+
+
+// main.js
+const roles = {
+  harvester: require("role.harvester"),
+  builder: require("role.builder"),
+  upgrader: require("role.upgrader"),
+  repairer: require("role.repairer"),
+  staticHarvester: require("role.staticHarvester"),
+  carrier: require("role.carrier"),
+};
+
 
 // Function to calculate the body parts of a creep based on available energy in the room
 const PROGRESS_CHECK_INTERVAL = 100; // Check every 100 ticks
@@ -195,26 +200,12 @@ module.exports.loop = function () {
       }
     });
   }
-  // Iterate over all creeps and execute their role-specific logic
+  // Then in your loop
   for (var name in Game.creeps) {
     var creep = Game.creeps[name];
-    if (creep.memory.role == "harvester") {
-      roleHarvester.run(creep);
-    }
-    if (creep.memory.role == "upgrader") {
-      roleUpgrader.run(creep);
-    }
-    if (creep.memory.role == "builder") {
-      roleBuilder.run(creep);
-    }
-    if (creep.memory.role == "repairer") {
-      roleRepairer.run(creep);
-    }
-    if (creep.memory.role == "staticHarvester") {
-      roleStaticHarvester.run(creep);
-    }
-    if (creep.memory.role == "carrier") {
-      roleCarrier.run(creep);
+    if (roles[creep.memory.role]) {
+      roles[creep.memory.role].run(creep);
     }
   }
+
 };
