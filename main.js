@@ -52,8 +52,6 @@ function getBody(segment, room) {
 // Main game loop
 module.exports.loop = function () {
   profiler.wrap(function () {
- 
-
     // Only run memory cleanup if the number of creeps in memory doesn't match the number of creeps in the game
     if (Object.keys(Memory.creeps).length !== Object.keys(Game.creeps).length) {
       for (var name in Memory.creeps) {
@@ -151,7 +149,7 @@ module.exports.loop = function () {
         if (carriers.length < carrierTarget) {
           var newName = "Carrier" + Game.time;
           // console.log("Spawning new carrier: " + newName);
-          Game.spawns["Spawn1"].spawnCreep(getBody([CARRY, MOVE, MOVE], room), newName, {
+          Game.spawns["Spawn1"].spawnCreep(getBody([CARRY, CARRY, CARRY, CARRY, CARRY, MOVE], room), newName, {
             memory: { role: "carrier" },
           });
         }
