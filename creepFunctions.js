@@ -41,7 +41,7 @@ Creep.prototype.harvestEnergy = function harvestEnergy() {
 
     if (droppedEnergy) {
       if (this.pickup(droppedEnergy) == ERR_NOT_IN_RANGE) {
-        this.moveTo(droppedEnergy, { visualizePathStyle: { stroke: "#ffaa00" } });
+        this.moveTo(droppedEnergy, { visualizePathStyle: { stroke: "#ffaa00" }, reusePath: 20 });
       }
     } else {
       const container = this.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -49,7 +49,7 @@ Creep.prototype.harvestEnergy = function harvestEnergy() {
       });
 
       if (container && this.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-        this.moveTo(container, { visualizePathStyle: { stroke: "#ffaa00" } });
+        this.moveTo(container, { visualizePathStyle: { stroke: "#ffaa00" },reusePath: 20 });
       }
     }
   }

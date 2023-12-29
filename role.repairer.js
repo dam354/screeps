@@ -25,6 +25,7 @@ var roleRepairer = {
           // Move to the target if not in range
           creep.moveTo(targets[0], {
             visualizePathStyle: { stroke: "#ffaa00" },
+            reusePath: 20
           });
         }
       }
@@ -34,6 +35,7 @@ var roleRepairer = {
       if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
         creep.moveTo(sources[0], {
           visualizePathStyle: { stroke: "#ffaa00" },
+          reusePath: 20
         });
       }
     }
