@@ -198,36 +198,7 @@ module.exports.loop = function () {
         { align: "left", opacity: 0.8 }
       );
     }
-    // Track controller progress
-    if (Game.time % PROGRESS_CHECK_INTERVAL === 0) {
-      Memory.progressTracking = Memory.progressTracking || {};
-      const roomNames = Object.keys(Game.rooms);
 
-      roomNames.forEach((roomName) => {
-        const room = Game.rooms[roomName];
-        if (room.controller && room.controller.my) {
-          const currentProgress = room.controller.progress;
-          const lastCheck = Memory.progressTracking[roomName];
-
-          if (lastCheck) {
-            const progressDelta = currentProgress - lastCheck.progress;
-            const ticksDelta = Game.time - lastCheck.time;
-            const ratePerTick = progressDelta / ticksDelta;
-
-            const remainingProgress = room.controller.progressTotal - currentProgress;
-            const estimatedTicksToNextLevel = Math.ceil(remainingProgress / ratePerTick);
-
-            console.log(`Room ${roomName}: Estimated ${estimatedTicksToNextLevel} ticks to next level.`);
-          }
-
-          // Update the tracking information
-          Memory.progressTracking[roomName] = {
-            progress: currentProgress,
-            time: Game.time,
-          };
-        }
-      });
-    }
     // Then in your loop
     for (var name in Game.creeps) {
       var creep = Game.creeps[name];
@@ -235,35 +206,5 @@ module.exports.loop = function () {
         roles[creep.memory.role].run(creep);
       }
     }
-    trackMetrics();
   });
 };
-
-function trackMetrics() {
-  // Initialize metrics in memory if they don't exist
-  Memory.metrics = Memory.metrics || { tick: Game.time, data: [] };
-
-  // Record metrics
-  const metrics = {
-    time: Game.time,
-    creeps: Object.keys(Game.creeps).length,
-    energy: _.sum(Game.rooms, (room) => room.energyAvailable),
-    cpuUsed: Game.cpu.getUsed(),
-    bucket: Game.cpu.bucket,
-    avgCreepLife: _.sum(Game.creeps, (creep) => creep.ticksToLive) / Object.keys(Game.creeps).length,
-    roomControl: _.sum(Game.rooms, (room) => (room.controller ? room.controller.level : 0)),
-    creepRoles: _.countBy(Game.creeps, (creep) => creep.memory.role),
-    // Add more metrics as needed
-  };
-  Memory.metrics.data.push(metrics);
-
-  // Remove old metrics
-  while (Memory.metrics.data.length > METRICS_DURATION) {
-    Memory.metrics.data.shift();
-  }
-
-  // Print metrics every METRICS_INTERVAL ticks
-  if ((Game.time - Memory.metrics.tick) % METRICS_INTERVAL === 0) {
-    console.log(JSON.stringify(Memory.metrics.data));
-  }
-}
