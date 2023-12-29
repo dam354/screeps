@@ -149,7 +149,7 @@ module.exports.loop = function () {
         if (carriers.length < carrierTarget) {
           var newName = "Carrier" + Game.time;
           // console.log("Spawning new carrier: " + newName);
-          Game.spawns["Spawn1"].spawnCreep(getBody([CARRY, CARRY, CARRY, CARRY, CARRY, MOVE], room), newName, {
+          Game.spawns["Spawn1"].spawnCreep(getBody([CARRY, MOVE], room), newName, {
             memory: { role: "carrier" },
           });
         }
