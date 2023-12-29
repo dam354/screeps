@@ -27,7 +27,7 @@ const roleCarrier = {
               structure.structureType == STRUCTURE_SPAWN ||
               structure.structureType == STRUCTURE_EXTENSION ||
               structure.structureType == STRUCTURE_TOWER) &&
-            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+            (structure.store.getCapacity(RESOURCE_ENERGY) - structure.store[RESOURCE_ENERGY]) > 0
           );
         },
       });
@@ -75,7 +75,20 @@ const roleCarrier = {
     // Select the dropped resource with the most energy, if available
     if (droppedResources.length > 0) {
       return droppedResources[0];
-    
+    }
+
+    // If no dropped resources, then look for containers with energy
+    let containersWithEnergy = creep.room.find(FIND_STRUCTURES, {
+      filter: (s) => s.structureType == STRUCTURE_CONTAINER && s.store.getUsedCapacity(RESOURCE_ENERGY) > 0,
+    });
+
+    // Sort containers by energy amount, descending
+    if (containersWithEnergy.length > 0) {
+      containersWithEnergy.sort(
+        (a, b) => b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY)
+      );
+      return containersWithEnergy[0]; // Select the container with the most energy
+    }
 
     return null; // Return null if no targets are found
   },
