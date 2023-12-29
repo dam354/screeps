@@ -75,9 +75,10 @@ const roleCarrier = {
     // Select the dropped resource with the most energy, if available
     if (droppedResources.length > 0) {
       return droppedResources[0];
-    }
+    
 
-  
+    return null; // Return null if no targets are found
+  },
 
   // Logic for handling full spots near static harvesters
   moveToStandbyPosition: function (creep) {
