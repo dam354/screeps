@@ -34,7 +34,12 @@ function getBody(segment, room) {
   }
 
   let maxSegments = Math.floor(energyAvailable / segmentCost);
-  return new Array(maxSegments).fill(segment).flat();
+  let body = [];
+  for (let i = 0; i < maxSegments; i++) {
+    body = body.concat(segment);
+  }
+
+  return body;
 }
 
 // Main game loop
