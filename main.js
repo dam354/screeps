@@ -1,7 +1,6 @@
 var creepFunctions = require("creepFunctions");
 var roomPositionFunctions = require("roomPositionFunctions");
 
-
 // main.js
 const roles = {
   harvester: require("role.harvester"),
@@ -12,10 +11,14 @@ const roles = {
   carrier: require("role.carrier"),
 };
 
-
 // Function to calculate the body parts of a creep based on available energy in the room
 const PROGRESS_CHECK_INTERVAL = 100; // Check every 100 ticks
-
+/**
+ * Constructs a body for a creep based on available energy and a body segment.
+ * @param {Array} segment - An array of body parts (e.g., [MOVE, WORK]).
+ * @param {Object} room - The room object with energyAvailable property.
+ * @return {Array} An array representing the body of the creep.
+ */
 function getBody(segment, room) {
   // Validate inputs
   if (!Array.isArray(segment) || !room || typeof room.energyAvailable !== "number") {
@@ -23,7 +26,7 @@ function getBody(segment, room) {
     return [];
   }
 
-  const segmentCost = _.sumBy(segment, (s) => BODYPART_COST[s] || 0);
+  const segmentCost = _.sum(segment, (s) => BODYPART_COST[s] || 0);
 
   let energyAvailable = room.energyAvailable;
   if (energyAvailable < segmentCost) {
@@ -207,5 +210,4 @@ module.exports.loop = function () {
       roles[creep.memory.role].run(creep);
     }
   }
-
 };
