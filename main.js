@@ -10,7 +10,8 @@ const roles = {
   staticHarvester: require("role.staticHarvester"),
   carrier: require("role.carrier"),
 };
-
+const METRICS_INTERVAL = 300; // 5 seconds
+const METRICS_DURATION = 72000; // 1 hour
 // Function to calculate the body parts of a creep based on available energy in the room
 const PROGRESS_CHECK_INTERVAL = 100; // Check every 100 ticks
 /**
@@ -215,4 +216,36 @@ module.exports.loop = function () {
       roles[creep.memory.role].run(creep);
     }
   }
+  trackMetrics();
 };
+
+
+function trackMetrics() {
+  // Initialize metrics in memory if they don't exist
+  Memory.metrics = Memory.metrics || { tick: Game.time, data: [] };
+
+  // Record metrics
+  const metrics = {
+    time: Game.time,
+    creeps: Object.keys(Game.creeps).length,
+    energy: _.sum(Game.rooms, room => room.energyAvailable),
+    cpuUsed: Game.cpu.getUsed(),
+    bucket: Game.cpu.bucket,
+    avgCreepLife: _.sum(Game.creeps, creep => creep.ticksToLive) / Object.keys(Game.creeps).length,
+    roomControl: _.sum(Game.rooms, room => room.controller ? room.controller.level : 0),
+    creepRoles: _.countBy(Game.creeps, creep => creep.memory.role),
+    // Add more metrics as needed
+  };
+  Memory.metrics.data.push(metrics);
+
+  // Remove old metrics
+  while (Memory.metrics.data.length > METRICS_DURATION) {
+    Memory.metrics.data.shift();
+  }
+
+  // Print metrics every METRICS_INTERVAL ticks
+  if ((Game.time - Memory.metrics.tick) % METRICS_INTERVAL === 0) {
+    console.log(JSON.stringify(Memory.metrics.data));
+  }
+}
+
