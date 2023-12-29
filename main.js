@@ -12,27 +12,21 @@ var roomPositionFunctions = require("roomPositionFunctions");
 const PROGRESS_CHECK_INTERVAL = 100; // Check every 100 ticks
 
 function getBody(segment, room) {
-  8;
-  // Calculate the cost of a single segment of body parts
-  const segmentCost = _.sum(segment, (s) => BODYPART_COST[s]);
+  // Validate inputs
+  if (!Array.isArray(segment) || !room || typeof room.energyAvailable !== "number") {
+    console.error("Invalid input");
+    return [];
+  }
+
+  const segmentCost = _.sumBy(segment, (s) => BODYPART_COST[s] || 0);
 
   let energyAvailable = room.energyAvailable;
-
-  // If the available energy is less than the cost of one segment, return an empty array or minimal viable body
   if (energyAvailable < segmentCost) {
-    return []; // Or return a minimal viable body, e.g., [MOVE]
+    return [MOVE]; // Return minimal viable body
   }
 
-  // Calculate the maximum number of segments
   let maxSegments = Math.floor(energyAvailable / segmentCost);
-  let body = [];
-
-  // Efficiently build the body array
-  for (let i = 0; i < maxSegments; i++) {
-    body.push(...segment);
-  }
-
-  return body;
+  return new Array(maxSegments).fill(segment).flat();
 }
 
 // Main game loop
