@@ -13,7 +13,7 @@ const roles = {
 const METRICS_INTERVAL = 300; // 5 seconds
 const METRICS_DURATION = 72000; // 1 hour
 // Function to calculate the body parts of a creep based on available energy in the room
-const PROGRESS_CHECK_INTERVAL = 100; // Check every 100 ticks
+const PROGRESS_CHECK_INTERVAL = 5; // Check every 100 ticks
 /**
  * Constructs a body for a creep based on available energy and a body segment.
  * @param {Array} segment - An array of body parts (e.g., [MOVE, WORK]).
