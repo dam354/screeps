@@ -86,25 +86,18 @@ module.exports.loop = function () {
       //   });
       // }
 
-      // let repairerTarget = _.get(room.memory, ["census", "repairer"], 3); // Adjust the target as needed
-      // var repairers = _.filter(
-      //   Game.creeps,
-      //   (creep) => creep.memory.role == "repairer"
-      // );
-      // console.log("Repairers: " + repairers.length);
+      let repairerTarget = _.get(room.memory, ["census", "repairer"], 3); // Adjust the target as needed
+      var repairers = _.filter(Game.creeps, (creep) => creep.memory.role == "repairer");
+      console.log("Repairers: " + repairers.length);
 
-      // // If there are fewer repairers than the target, spawn new repairers
-      // if (repairers.length < repairerTarget) {
-      //   var newName = "Repairer" + Game.time;
-      //   console.log("Spawning new repairer: " + newName);
-      //   Game.spawns["Spawn1"].spawnCreep(
-      //     getBody([WORK, CARRY, MOVE], room),
-      //     newName,
-      //     {
-      //       memory: { role: "repairer" },
-      //     }
-      //   );
-      // }
+      // If there are fewer repairers than the target, spawn new repairers
+      if (repairers.length < repairerTarget) {
+        var newName = "Repairer" + Game.time;
+        console.log("Spawning new repairer: " + newName);
+        Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
+          memory: { role: "repairer" },
+        });
+      }
 
       let builderTarget = _.get(room.memory, ["census", "builder"], 4);
       var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");

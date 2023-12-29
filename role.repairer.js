@@ -1,37 +1,41 @@
 var roleRepairer = {
   /** @param {Creep} creep **/
   run: function (creep) {
+    // Check if creep should switch state between working and harvesting
     if (creep.memory.working && creep.store[RESOURCE_ENERGY] == 0) {
       creep.memory.working = false;
       creep.say("🌾 harvest");
     }
     if (!creep.memory.working && creep.store.getFreeCapacity() == 0) {
       creep.memory.working = true;
-      creep.say("🔋 FILLING");
+      creep.say("🔧 repairing");
     }
 
     if (creep.memory.working) {
-      var targets = creep.room.find(FIND_MY_STRUCTURES);
-      targets = _.filter(targets, function (struct) {
-        return (
-          (struct.structureType == STRUCTURE_CONTAINER ||
-            struct.structureType == STRUCTURE_EXTENSION ||
-            struct.structureType == STRUCTURE_TOWER ||
-            struct.structureType == STRUCTURE_SPAWN) &&
-          struct.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-        );
+      // Find structures that need repairs
+      var targets = creep.room.find(FIND_STRUCTURES, {
+        filter: (object) => object.hits < object.hitsMax,
       });
 
-      if (targets.length) {
-        let target = creep.pos.findClosestByRange(targets);
-        if (creep.pos.isNearTo(target)) {
-          creep.transfer(target, RESOURCE_ENERGY);
-        } else {
-          creep.moveTo(target);
+      // Sort targets by most damaged
+      targets.sort((a, b) => a.hits - b.hits);
+
+      if (targets.length > 0) {
+        if (creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
+          // Move to the target if not in range
+          creep.moveTo(targets[0], {
+            visualizePathStyle: { stroke: "#ffaa00" },
+          });
         }
       }
     } else {
-      creep.harvestEnergy();
+      // Harvest energy when not working
+      var sources = creep.room.find(FIND_SOURCES);
+      if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(sources[0], {
+          visualizePathStyle: { stroke: "#ffaa00" },
+        });
+      }
     }
   },
 };

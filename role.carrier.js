@@ -3,6 +3,7 @@ const roleCarrier = {
   /** @param {Creep} creep **/
   run: function (creep) {
     // Creep renewal logic
+
     if (creep.ticksToLive < 50) {
       creep.say("Renewing");
       creep.moveTo(Game.spawns["Spawn1"], { visualizePathStyle: { stroke: "#00ff00" } }); // Green path for renewing
