@@ -31,7 +31,7 @@ function getBody(segment, room) {
 
   let energyAvailable = room.energyAvailable;
   if (energyAvailable < segmentCost) {
-    return [MOVE]; // Return minimal viable body
+    return []; // Return empty array if not enough energy for minimum body
   }
 
   let maxSegments = Math.floor(energyAvailable / segmentCost);
@@ -40,11 +40,27 @@ function getBody(segment, room) {
     body = body.concat(segment);
   }
 
+  // Ensure the body size does not exceed the game's limit
+  if (body.length > MAX_CREEP_SIZE) {
+    body = body.slice(0, MAX_CREEP_SIZE);
+  }
+
   return body;
 }
-
 // Main game loop
 module.exports.loop = function () {
+  for (let name in Game.creeps) {
+    let creep = Game.creeps[name];
+
+    // Check if the creep has less than 2 body parts
+    if (creep.body.length < 2) {
+      // Instruct the creep to remove itself from the game
+      creep.suicide();
+
+      console.log(`Creep ${name} with less than 2 body parts has been removed.`);
+    }
+  }
+
   // Only run memory cleanup if the number of creeps in memory doesn't match the number of creeps in the game
   if (Object.keys(Memory.creeps).length !== Object.keys(Game.creeps).length) {
     for (var name in Memory.creeps) {
@@ -219,7 +235,6 @@ module.exports.loop = function () {
   trackMetrics();
 };
 
-
 function trackMetrics() {
   // Initialize metrics in memory if they don't exist
   Memory.metrics = Memory.metrics || { tick: Game.time, data: [] };
@@ -228,12 +243,12 @@ function trackMetrics() {
   const metrics = {
     time: Game.time,
     creeps: Object.keys(Game.creeps).length,
-    energy: _.sum(Game.rooms, room => room.energyAvailable),
+    energy: _.sum(Game.rooms, (room) => room.energyAvailable),
     cpuUsed: Game.cpu.getUsed(),
     bucket: Game.cpu.bucket,
-    avgCreepLife: _.sum(Game.creeps, creep => creep.ticksToLive) / Object.keys(Game.creeps).length,
-    roomControl: _.sum(Game.rooms, room => room.controller ? room.controller.level : 0),
-    creepRoles: _.countBy(Game.creeps, creep => creep.memory.role),
+    avgCreepLife: _.sum(Game.creeps, (creep) => creep.ticksToLive) / Object.keys(Game.creeps).length,
+    roomControl: _.sum(Game.rooms, (room) => (room.controller ? room.controller.level : 0)),
+    creepRoles: _.countBy(Game.creeps, (creep) => creep.memory.role),
     // Add more metrics as needed
   };
   Memory.metrics.data.push(metrics);
@@ -248,4 +263,3 @@ function trackMetrics() {
     console.log(JSON.stringify(Memory.metrics.data));
   }
 }
-
