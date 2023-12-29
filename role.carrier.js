@@ -77,21 +77,7 @@ const roleCarrier = {
       return droppedResources[0];
     }
 
-    // If no dropped resources, then look for containers with energy
-    let containersWithEnergy = creep.room.find(FIND_STRUCTURES, {
-      filter: (s) => s.structureType == STRUCTURE_CONTAINER && s.store.getUsedCapacity(RESOURCE_ENERGY) > 0,
-    });
-
-    // Sort containers by energy amount, descending
-    if (containersWithEnergy.length > 0) {
-      containersWithEnergy.sort(
-        (a, b) => b.store.getUsedCapacity(RESOURCE_ENERGY) - a.store.getUsedCapacity(RESOURCE_ENERGY)
-      );
-      return containersWithEnergy[0]; // Select the container with the most energy
-    }
-
-    return null; // Return null if no targets are found
-  },
+  
 
   // Logic for handling full spots near static harvesters
   moveToStandbyPosition: function (creep) {
