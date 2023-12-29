@@ -27,7 +27,7 @@ const roleCarrier = {
               structure.structureType == STRUCTURE_SPAWN ||
               structure.structureType == STRUCTURE_EXTENSION ||
               structure.structureType == STRUCTURE_TOWER) &&
-            (structure.store.getCapacity(RESOURCE_ENERGY) - structure.store[RESOURCE_ENERGY]) > 0
+            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
           );
         },
       });
