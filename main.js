@@ -52,24 +52,14 @@ function getBody(segment, room) {
 // Main game loop
 module.exports.loop = function () {
   profiler.wrap(function () {
-    for (let name in Game.creeps) {
-      let creep = Game.creeps[name];
-
-      // Check if the creep has less than 2 body parts
-      if (creep.body.length < 2) {
-        // Instruct the creep to remove itself from the game
-        creep.suicide();
-
-        console.log(`Creep ${name} with less than 2 body parts has been removed.`);
-      }
-    }
+ 
 
     // Only run memory cleanup if the number of creeps in memory doesn't match the number of creeps in the game
     if (Object.keys(Memory.creeps).length !== Object.keys(Game.creeps).length) {
       for (var name in Memory.creeps) {
         if (!Game.creeps[name]) {
           delete Memory.creeps[name];
-          console.log("Clearing non-existing creep memory:", name);
+          // console.log("Clearing non-existing creep memory:", name);
         }
       }
     }
@@ -115,12 +105,12 @@ module.exports.loop = function () {
 
         let repairerTarget = _.get(room.memory, ["census", "repairer"], 3); // Adjust the target as needed
         var repairers = _.filter(Game.creeps, (creep) => creep.memory.role == "repairer");
-        console.log("Repairers: " + repairers.length);
+        // console.log("Repairers: " + repairers.length);
 
         // If there are fewer repairers than the target, spawn new repairers
         if (repairers.length < repairerTarget) {
           var newName = "Repairer" + Game.time;
-          console.log("Spawning new repairer: " + newName);
+          // console.log("Spawning new repairer: " + newName);
           Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
             memory: { role: "repairer" },
           });
@@ -128,7 +118,7 @@ module.exports.loop = function () {
 
         let builderTarget = _.get(room.memory, ["census", "builder"], 4);
         var builders = _.filter(Game.creeps, (creep) => creep.memory.role == "builder");
-        console.log("builders: " + builders.length);
+        // console.log("builders: " + builders.length);
 
         // Check for construction sites in the room
         let sites = room.find(FIND_CONSTRUCTION_SITES);
@@ -136,7 +126,7 @@ module.exports.loop = function () {
         // Spawn new builders if there are construction sites and fewer builders than the target
         if (sites.length > 0 && builders.length < builderTarget) {
           var newName = "builder" + Game.time;
-          console.log("Spawning new builder: " + newName);
+          // console.log("Spawning new builder: " + newName);
           Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
             memory: { role: "builder" },
           });
@@ -144,11 +134,11 @@ module.exports.loop = function () {
         // Similar logic for upgraders and builders
         let upgraderTarget = _.get(room.memory, ["census", "upgrader"], 3);
         var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == "upgrader");
-        console.log("upgraders: " + upgraders.length);
+        // console.log("upgraders: " + upgraders.length);
 
         if (upgraders.length < upgraderTarget) {
           var newName = "upgrader" + Game.time;
-          console.log("Spawning new upgrader: " + newName);
+          // console.log("Spawning new upgrader: " + newName);
           Game.spawns["Spawn1"].spawnCreep(getBody([WORK, CARRY, MOVE], room), newName, {
             memory: { role: "upgrader" },
           });
@@ -156,11 +146,11 @@ module.exports.loop = function () {
 
         let carrierTarget = _.get(room.memory, ["census", "carrier"], 4);
         var carriers = _.filter(Game.creeps, (creep) => creep.memory.role == "carrier");
-        console.log("Carriers: " + carriers.length);
+        // console.log("Carriers: " + carriers.length);
 
         if (carriers.length < carrierTarget) {
           var newName = "Carrier" + Game.time;
-          console.log("Spawning new carrier: " + newName);
+          // console.log("Spawning new carrier: " + newName);
           Game.spawns["Spawn1"].spawnCreep(getBody([CARRY, MOVE, MOVE], room), newName, {
             memory: { role: "carrier" },
           });
@@ -171,14 +161,14 @@ module.exports.loop = function () {
             (creep) => creep.memory.role == "staticHarvester" && creep.memory.sourceId == sourceId
           );
 
-          console.log("Static Harvesters for source " + sourceId + ": " + staticHarvesters.length);
+          // console.log("Static Harvesters for source " + sourceId + ": " + staticHarvesters.length);
 
           if (staticHarvesters.length < sourceData.openSpots) {
             var newName = "StaticHarvester" + Game.time;
 
             // Check if the spawn is already in the process of spawning a creep
             if (!Game.spawns["Spawn1"].spawning) {
-              console.log("Spawning new static harvester: " + newName + " for source: " + sourceId);
+              // console.log("Spawning new static harvester: " + newName + " for source: " + sourceId);
               Game.spawns["Spawn1"].spawnCreep(getBody([WORK, WORK, MOVE], room), newName, {
                 memory: { role: "staticHarvester", sourceId: sourceId },
               });
@@ -198,7 +188,36 @@ module.exports.loop = function () {
         { align: "left", opacity: 0.8 }
       );
     }
+    // Track controller progress
+    if (Game.time % PROGRESS_CHECK_INTERVAL === 0) {
+      Memory.progressTracking = Memory.progressTracking || {};
+      const roomNames = Object.keys(Game.rooms);
 
+      roomNames.forEach((roomName) => {
+        const room = Game.rooms[roomName];
+        if (room.controller && room.controller.my) {
+          const currentProgress = room.controller.progress;
+          const lastCheck = Memory.progressTracking[roomName];
+
+          if (lastCheck) {
+            const progressDelta = currentProgress - lastCheck.progress;
+            const ticksDelta = Game.time - lastCheck.time;
+            const ratePerTick = progressDelta / ticksDelta;
+
+            const remainingProgress = room.controller.progressTotal - currentProgress;
+            const estimatedTicksToNextLevel = Math.ceil(remainingProgress / ratePerTick);
+
+            // console.log(`Room ${roomName}: Estimated ${estimatedTicksToNextLevel} ticks to next level.`);
+          }
+
+          // Update the tracking information
+          Memory.progressTracking[roomName] = {
+            progress: currentProgress,
+            time: Game.time,
+          };
+        }
+      });
+    }
     // Then in your loop
     for (var name in Game.creeps) {
       var creep = Game.creeps[name];
