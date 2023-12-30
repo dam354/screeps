@@ -4,13 +4,6 @@ const roleCarrier = {
   run: function (creep) {
     // Creep renewal logic
 
-    if (creep.ticksToLive < 50) {
-      creep.say("Renewing");
-      creep.moveTo(Game.spawns["Spawn1"], { visualizePathStyle: { stroke: "#00ff00" } }); // Green path for renewing
-      Game.spawns["Spawn1"].renewCreep(creep);
-      return; // Exit early to avoid further action this tick
-    }
-
     if (creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0) {
       creep.memory.delivering = true;
     } else if (creep.store[RESOURCE_ENERGY] === 0) {
@@ -39,7 +32,7 @@ const roleCarrier = {
 
       if (target) {
         if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { visualizePathStyle: { stroke: "#0000ff" },reusePath: 20 }); // Blue path for delivering
+          creep.moveTo(target, { visualizePathStyle: { stroke: "#0000ff" }, reusePath: 20 }); // Blue path for delivering
         }
       } else {
         // Switch to collecting mode if no delivery targets
@@ -58,7 +51,7 @@ const roleCarrier = {
       if (target) {
         let actionResult = target instanceof Resource ? creep.pickup(target) : creep.withdraw(target, RESOURCE_ENERGY);
         if (actionResult == ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { visualizePathStyle: { stroke: "#ffaa00" },reusePath: 20 }); // Orange path for collecting
+          creep.moveTo(target, { visualizePathStyle: { stroke: "#ffaa00" }, reusePath: 20 }); // Orange path for collecting
         }
       } else {
         // If no targets are found, move to a standby position
@@ -102,7 +95,7 @@ const roleCarrier = {
   moveToStandbyPosition: function (creep) {
     // Define standby positions or calculate them
     const standbyPos = new RoomPosition(25, 25, creep.room.name); // Example standby position
-    creep.moveTo(standbyPos, { visualizePathStyle: { stroke: "#00ff00" },reusePath: 20 }); // Green path for standby position
+    creep.moveTo(standbyPos, { visualizePathStyle: { stroke: "#00ff00" }, reusePath: 20 }); // Green path for standby position
   },
 };
 

@@ -25,19 +25,12 @@ var roleRepairer = {
           // Move to the target if not in range
           creep.moveTo(targets[0], {
             visualizePathStyle: { stroke: "#ffaa00" },
-            reusePath: 20
+            reusePath: 20,
           });
         }
       }
     } else {
-      // Harvest energy when not working
-      var sources = creep.room.find(FIND_SOURCES);
-      if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(sources[0], {
-          visualizePathStyle: { stroke: "#ffaa00" },
-          reusePath: 20
-        });
-      }
+      creep.harvestEnergy();
     }
   },
 };

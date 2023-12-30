@@ -4,7 +4,7 @@ var roleHarvester = {
     // Ensure room sources are cached
     if (!creep.room.memory.sources) {
       let sources = creep.room.find(FIND_SOURCES);
-      creep.room.memory.sources = sources.map(source => source.id);
+      creep.room.memory.sources = sources.map((source) => source.id);
     }
 
     if (creep.memory.working && creep.store[RESOURCE_ENERGY] == 0) {
@@ -45,7 +45,7 @@ var roleHarvester = {
       if (source && creep.harvest(source) == ERR_NOT_IN_RANGE) {
         creep.moveTo(source, {
           visualizePathStyle: { stroke: "#ffaa00" },
-          reusePath: 20
+          reusePath: 20,
         });
       }
     }
@@ -53,9 +53,9 @@ var roleHarvester = {
 
   // Function to assign a new source to the creep
   assignNewSource: function (creep) {
-    let availableSources = creep.room.memory.sources.map(id => Game.getObjectById(id));
+    let availableSources = creep.room.memory.sources.map((id) => Game.getObjectById(id));
     // Filter out sources that are already at capacity
-    availableSources = availableSources.filter(source => {
+    availableSources = availableSources.filter((source) => {
       let creepsAssigned = _.filter(Game.creeps, (c) => c.memory.sourceId === source.id);
       return creepsAssigned.length < 2; // Example: max 2 creeps per source
     });

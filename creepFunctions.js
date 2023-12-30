@@ -24,7 +24,7 @@ Creep.prototype.harvestEnergy = function harvestEnergy() {
     });
 
     if (container && this.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-      this.moveTo(container, { visualizePathStyle: { stroke: "#ffaa00" },reusePath: 20 });
+      this.moveTo(container, { visualizePathStyle: { stroke: "#ffaa00" }, reusePath: 20 });
     } else {
       const droppedEnergy = this.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
         filter: (resource) => resource.resourceType == RESOURCE_ENERGY,

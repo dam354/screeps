@@ -1,0 +1,15 @@
+{
+  "name": "screeps",
+  "version": "1.0.0",
+  "description": "This project is a collection of scripts for the game Screeps, where players write JavaScript (or any other transpiled language) to control their units, known as \"creeps\", and manage their in-game operations.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/screeps": "^3.3.7"
+  }
+}
